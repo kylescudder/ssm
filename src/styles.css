@@ -1,0 +1,207 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Board follows the OS theme; auth + profile pages (wrapped in `.dark`) are always dark, like Paddock. */
+@custom-variant dark {
+	@media (prefers-color-scheme: dark) {
+		@slot;
+	}
+	&:where(.dark, .dark *) {
+		@slot;
+	}
+}
+
+@theme {
+	--font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+	--font-display: "Space Grotesk", "DM Sans", sans-serif;
+	/* Pit-wall palette. Colour is meaning: flag = your move, never decoration. */
+	--color-ink: #101111;
+	--color-panel: #161918;
+	--color-line: #262a27;
+	--color-chalk: #edece7;
+	--color-dim: #858b87;
+	--color-spent: #3a3f3b;
+	--color-flag: #f14936;
+	--color-amber: #e6b04e;
+	--color-telemetry: #7db3cc;
+	--color-go: #9fcb8a;
+}
+
+/* Better Auth UI (shadcn) tokens — Paddock's palette, `--ba-` prefixed. */
+@theme inline {
+	--font-heading: "Space Grotesk", sans-serif;
+	--color-background: var(--ba-background);
+	--color-foreground: var(--ba-foreground);
+	--color-card: var(--ba-card);
+	--color-card-foreground: var(--ba-card-foreground);
+	--color-popover: var(--ba-popover);
+	--color-popover-foreground: var(--ba-popover-foreground);
+	--color-primary: var(--ba-primary);
+	--color-primary-foreground: var(--ba-primary-foreground);
+	--color-secondary: var(--ba-secondary);
+	--color-secondary-foreground: var(--ba-secondary-foreground);
+	--color-muted: var(--ba-muted);
+	--color-muted-foreground: var(--ba-muted-foreground);
+	--color-accent: var(--ba-accent);
+	--color-accent-foreground: var(--ba-accent-foreground);
+	--color-destructive: var(--ba-destructive);
+	--color-border: var(--ba-border);
+	--color-input: var(--ba-input);
+	--color-ring: var(--ba-ring);
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--animate-caret-blink: caret-blink 1.25s ease-out infinite;
+	@keyframes caret-blink {
+		0%,
+		70%,
+		100% {
+			opacity: 1;
+		}
+		20%,
+		50% {
+			opacity: 0;
+		}
+	}
+}
+
+:root {
+	color-scheme: light dark;
+	--radius: 0.5rem;
+	--ba-background: #101111;
+	--ba-foreground: #edece7;
+	--ba-card: #171a18;
+	--ba-card-foreground: #edece7;
+	--ba-popover: #171a18;
+	--ba-popover-foreground: #edece7;
+	--ba-primary: #f45540;
+	--ba-primary-foreground: #101111;
+	--ba-secondary: #222623;
+	--ba-secondary-foreground: #edece7;
+	--ba-muted: #1d201e;
+	--ba-muted-foreground: #a8b0a5;
+	--ba-accent: #232724;
+	--ba-accent-foreground: #edece7;
+	--ba-destructive: #ff8b7c;
+	--ba-border: #292d2a;
+	--ba-input: #343935;
+	--ba-ring: #f45540;
+}
+
+html,
+body {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	@apply bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+	font-feature-settings: "cv11", "ss01";
+}
+
+::selection {
+	background: #f1493655;
+}
+
+/* Start lights: the lamp for the current stage. Pulses only when it's your move. */
+.lamp-live {
+	box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 22%, transparent), 0 0 10px color-mix(in srgb, currentColor 55%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+	.lamp-urgent {
+		animation: lamp-pulse 2.4s ease-in-out infinite;
+	}
+}
+@keyframes lamp-pulse {
+	50% {
+		box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 30%, transparent), 0 0 16px color-mix(in srgb, currentColor 75%, transparent);
+	}
+}
+
+/* ── Paddock-style auth + profile pages ─────────────────────── */
+.paddock-shell {
+	min-height: 100vh;
+	background: #101111;
+	color: #edece7;
+	font-family: "DM Sans", sans-serif;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	color-scheme: dark;
+}
+.paddock-shell ::selection {
+	background: #f4554055;
+}
+.paddock-shell :is(button, a, input, select):focus-visible {
+	outline: 2px solid #f45540;
+	outline-offset: 4px;
+}
+.paddock-topbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	max-width: 1220px;
+	margin: 0 auto;
+	padding: 22px 24px;
+	font-size: 13px;
+}
+.paddock-topbar a {
+	color: #858b87;
+}
+.paddock-topbar a:hover {
+	color: #edece7;
+}
+.eyebrow {
+	font-size: 9px;
+	letter-spacing: 1.5px;
+	color: #f45540;
+	font-weight: 650;
+}
+.sign-in-page {
+	max-width: 500px;
+	padding: 45px 20px;
+	margin: 30px auto;
+}
+.sign-in-page > h1 {
+	font-family: "Space Grotesk", sans-serif;
+	letter-spacing: -1.8px;
+	font-size: 43px;
+	line-height: 1.1;
+	font-weight: 500;
+	margin: 15px 0 19px;
+}
+.sign-in-page > p {
+	font-size: 14px;
+	color: #99a68b;
+	line-height: 1.9;
+	margin-bottom: 24px;
+}
+.auth-page {
+	max-width: 440px;
+}
+.auth-page > .paddock-auth {
+	margin-top: 30px;
+}
+.auth-page > .auth-note {
+	margin-top: 24px;
+	font-size: 13px;
+	color: #99a68b;
+}
+.profile-page {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 38px 20px 80px;
+}
+.profile-page > h1 {
+	font-family: "Space Grotesk", sans-serif;
+	font-size: 34px;
+	font-weight: 500;
+	letter-spacing: -1.3px;
+	margin: 12px 0 28px;
+}
+.profile-page .profile-note {
+	margin-top: 16px;
+	font-size: 13px;
+	color: #99a68b;
+}
